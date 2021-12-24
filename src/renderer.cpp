@@ -46,13 +46,26 @@ void renderer_t::render_player_view()
 {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   
+  setup_view_matrix();
+  
   render_map();
   render_sprite();
 }
 
+void renderer_t::setup_view_matrix()
+{
+  vec3_t inverted_origin = vec3_t(m_game.get_camera().view_origin * -1, 0.0f);
+  float inverted_angle = -m_game.get_camera().view_angle;
+  
+  mat4_t matrix_rotate = mat4_t().init_rotation_z(inverted_angle);
+  mat4_t matrix_translate = mat4_t().init_translation(inverted_origin);
+  
+  m_view_matrix = matrix_translate * matrix_rotate;
+}
+
 void renderer_t::render_map()
 {
-  mat4_t mvp = m_game.get_camera().view_matrix * m_map_projection_matrix;
+  mat4_t mvp = m_view_matrix * m_map_projection_matrix;
   m_shader.uniform_mvp(mvp);
   
   draw_mesh(m_mesh_map);
@@ -60,10 +73,13 @@ void renderer_t::render_map()
 
 void renderer_t::render_sprite()
 {
-  static const vec2_t sprite_size = vec2_t(TEXEL_WIDTH, TEXEL_HEIGHT);
-  static const vec2_t sprite_pos[] = {
-    vec2_t(+0.5f, +1.0f), vec2_t(+0.5f, -0.0f), vec2_t(-0.5f, +1.0f),
-    vec2_t(-0.5f, -0.0f), vec2_t(-0.5f, +1.0f), vec2_t(+0.5f, -0.0f)
+  const float sprite_z_level = -0.6f;
+  const vec2_t texel_size = vec2_t(TEXEL_WIDTH, TEXEL_HEIGHT);
+  
+  // NOTE: diagonally slanted mesh on z-axis for perspective
+  static const vec3_t sprite_pos[] = {
+    vec3_t(+0.5f, +1.0f, -1.0f), vec3_t(+0.5f, -0.0f, +0.0f), vec3_t(-0.5f, +1.0f, -1.0f),
+    vec3_t(-0.5f, -0.0f, +0.0f), vec3_t(-0.5f, +1.0f, -1.0f), vec3_t(+0.5f, -0.0f, +0.0f)
   };
   
   static const vec2_t sprite_uv[] = {
@@ -73,7 +89,7 @@ void renderer_t::render_sprite()
   
   static vertex_t sprite_vertices[6 * MAX_SPRITES];
   
-  mat4_t mvp = m_game.get_camera().view_matrix * m_sprite_projection_matrix;
+  mat4_t mvp = m_view_matrix * m_sprite_projection_matrix;
   m_shader.uniform_mvp(mvp);
   
   int num_vertices = 6 * m_game.num_entities();
@@ -84,8 +100,15 @@ void renderer_t::render_sprite()
       continue;
     
     for (int j = 0; j < 6; j++) {
-      vec3_t vertex_pos = vec3_t(sprite_pos[j].rotate(sprite.rotation) + sprite.position, -0.6);
-      vec2_t vertex_uv = (sprite_uv[j] + vec2_t(sprite.frame, sprite.state)) * sprite_size;
+      vec3_t sprite_size_pos = sprite_pos[j] * vec3_t(sprite.width, sprite.height, sprite.height);
+      vec3_t sprite_rot_pos = sprite_size_pos.rotate_z(m_game.get_camera().view_angle);
+      
+      vec2_t sprite_uv_scaled = sprite_uv[j] * vec2_t(sprite.width, sprite.height);
+      vec2_t sprite_uv_offset = sprite_uv_scaled + vec2_t(sprite.frame, sprite.state);
+      
+      vec3_t vertex_pos = sprite_rot_pos + vec3_t(sprite.position, 0);
+      vec2_t vertex_uv = sprite_uv_offset * texel_size;
+      
       sprite_vertices[i * 6 + j].pos = vertex_pos;
       sprite_vertices[i * 6 + j].uv = vertex_uv;
     }

@@ -122,6 +122,19 @@ public:
   mat4_t &init_orthogonal_perspective(float l, float r, float t, float b, float n, float f);
 };
 
+class plane2d_t {
+public:
+  vec2_t normal;
+  float distance;
+
+public:
+  plane2d_t(vec2_t _normal = vec2_t(1, 0), float _distance = 0)
+  {
+    normal = _normal;
+    distance = _distance;
+  }
+};
+
 class plane_t {
 public:
   vec3_t normal;

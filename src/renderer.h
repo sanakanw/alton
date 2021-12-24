@@ -71,8 +71,11 @@ private:
   mat4_t          m_map_projection_matrix;
   mat4_t          m_sprite_projection_matrix;
   
+  mat4_t          m_view_matrix;
+  
   const game_t    &m_game;
   
+  void setup_view_matrix();
   void render_map();
   void render_sprite();
   void draw_mesh(const mesh_t &mesh);

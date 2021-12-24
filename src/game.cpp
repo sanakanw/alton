@@ -2,17 +2,31 @@
 
 #include <iostream>
 
+entity_t sprite_entity; // temporary test sprite
+
 game_t::game_t()
 {
   m_tick = 0;
   m_num_entities = 0;
   
   m_player_entity = add_entity();
-  m_sprite[m_player_entity].activate();
-  m_transform[m_player_entity].activate();
   m_clip[m_player_entity].activate();
+  m_sprite[m_player_entity].activate();
   m_motion[m_player_entity].activate();
+  m_transform[m_player_entity].activate();
+  m_sprite[m_player_entity].width = 1;
+  m_sprite[m_player_entity].height = 1;
   m_sprite[m_player_entity].state = 1;
+  
+  sprite_entity = add_entity();
+  m_sprite[sprite_entity].activate();
+  m_transform[sprite_entity].activate();
+  m_sprite[sprite_entity].width = 2;
+  m_sprite[sprite_entity].height = 2;
+  m_sprite[sprite_entity].state = 5;
+  m_sprite[sprite_entity].frame = 0;
+  
+  m_transform[sprite_entity].rotation = M_PI / 2.0f;
 }
 
 float game_t::move_accelerate(const vec2_t &prev_velocity, const vec2_t &wish_dir, float accel, float wish_speed) const
@@ -46,7 +60,7 @@ void game_t::update(float delta_time, const client_t &client)
   m_client = client;
   m_delta_time = delta_time;
   
-  player_look();
+  camera_rotate();
   player_move();
   
   apply_friction();
@@ -60,26 +74,28 @@ void game_t::update(float delta_time, const client_t &client)
   lock_camera_on_player();
 }
 
-void game_t::player_look()
+void game_t::camera_rotate()
 {
-  m_transform[m_player_entity].rotation += m_client.get_rot() * -m_delta_time * 2;
+  const float CAMERA_ROT_SPEED = 2.0f;
+  m_camera.view_angle += m_client.get_rot() * CAMERA_ROT_SPEED * -m_delta_time;
 }
 
 void game_t::player_move()
 {
+  const float PLAYER_MOVE_ACCEL = 4.0f;
   const float PLAYER_MOVE_SPEED = 24.0f;
   
-  vec2_t move_dir = vec2_t(m_client.get_right(), m_client.get_forward()).normalize();
-  
-  if (move_dir.length() > 0.1f) {
-    vec2_t wish_dir = move_dir.rotate(m_transform[m_player_entity].rotation);
+  if (m_client.get_right() || m_client.get_forward()) {
+    vec2_t move_dir = vec2_t(m_client.get_right(), m_client.get_forward()).normalize();
+    vec2_t wish_dir = move_dir.rotate(m_camera.view_angle);
     
-    float accel = move_accelerate(m_motion[m_player_entity].velocity, wish_dir, 4.0f, PLAYER_MOVE_SPEED);
-  
-    m_sprite[m_player_entity].frame = 1 + ((m_tick % 30) > 15);
+    float accel = move_accelerate(
+      m_motion[m_player_entity].velocity,
+      wish_dir,
+      PLAYER_MOVE_ACCEL,
+      PLAYER_MOVE_SPEED);
+    
     m_motion[m_player_entity].velocity += wish_dir * accel;
-  } else {
-    m_sprite[m_player_entity].frame = 0;
   }
 }
 
@@ -117,13 +133,16 @@ void game_t::clip_map()
         vec2_t corner_pos = check_pos.vround();
         vec2_t depth = check_pos - corner_pos;
         
-        plane_t plane;
-        if (abs(depth.x) < abs(depth.y))
-          plane = plane_t(vec3_t((depth.x < 0) * 2 - 1, 0.0f, 0.0f), -abs(depth.x));
-        else
-          plane = plane_t(vec3_t(0.0f, (depth.y < 0) * 2 - 1, 0.0f), -abs(depth.y));
+        float x_normal = (depth.x < 0) * 2 - 1;
+        float y_normal = (depth.y < 0) * 2 - 1;
         
-        vec2_t adjacent_pos = (map_pos + plane.normal.xy()).vround();
+        plane2d_t plane;
+        if (abs(depth.x) < abs(depth.y))
+          plane = plane2d_t(vec2_t(x_normal, 0.0f), -abs(depth.x));
+        else
+          plane = plane2d_t(vec2_t(0.0f, y_normal), -abs(depth.y));
+        
+        vec2_t adjacent_pos = (map_pos + plane.normal).vround();
         
         if (map_check(adjacent_pos.x, adjacent_pos.y) != TILE_WALL) {
           m_clip[i].planes[m_clip[i].num_planes] = plane;
@@ -136,22 +155,21 @@ void game_t::clip_map()
 
 void game_t::clip_motion()
 {
-  
   for (int i = 0; i < m_num_entities; i++) {
     if (!m_clip[i].is_active() || !m_motion[i].is_active())
         continue;
     
     if (m_clip[i].num_planes > 0) {
-      vec3_t net_normal;
+      vec2_t net_normal;
       
       for (int j = 0; j < m_clip[i].num_planes; j++)
         net_normal += m_clip[i].planes[j].normal * -m_clip[i].planes[j].distance;
       
       float beta = 3.0f * -net_normal.length() * m_delta_time;
-      float lambda = -(m_motion[i].velocity.dot(net_normal.normalize().xy()) + beta);
+      float lambda = -(m_motion[i].velocity.dot(net_normal.normalize()) + beta);
       
       if (lambda > 0)
-        m_motion[i].velocity += net_normal.normalize().xy() * lambda;
+        m_motion[i].velocity += net_normal.normalize() * lambda;
     }
   }
 }
@@ -199,7 +217,7 @@ void game_t::lock_camera_on_player()
   if (!m_transform[m_player_entity].is_active())
     return;
   
-  m_camera.view_origin = vec3_t(m_transform[m_player_entity].position, 0);
+  m_camera.view_origin = m_transform[m_player_entity].position;
 }
 
 void game_t::new_map(mapfile_t &mapfile)

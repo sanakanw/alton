@@ -51,15 +51,17 @@ public:
 
 class clip_t : public component_t {
 public:
-  vec2_t  position;
-  int     num_planes;
-  plane_t planes[MAX_PLANES];
+  vec2_t    position;
+  int       num_planes;
+  plane2d_t planes[MAX_PLANES];
 };
 
 class sprite_t : public component_t {
 public:
   vec2_t  position;
   float   rotation;
+  int     width;
+  int     height;
   int     state;
   int     frame;
 };
