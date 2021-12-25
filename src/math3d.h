@@ -13,6 +13,15 @@ class vec2_t;
 class vec3_t;
 class quat_t;
 
+inline float constrain_angle(float theta)
+{
+  float new_theta = fmod(theta, 2.0f * M_PI);
+  if (new_theta < 0)
+    new_theta += 2.0f * M_PI;
+  
+  return new_theta;
+}
+
 class vec2_t {
 public:
   float x, y;
@@ -34,6 +43,7 @@ public:
   
   float length() const;
   float dot(const vec2_t &v) const;
+  float to_angle() const;
   vec2_t normalize() const;
   vec2_t rotate(float angle) const;
   vec2_t vabs() const;
@@ -207,6 +217,11 @@ inline vec2_t &vec2_t::operator*=(float f)
 inline float vec2_t::length() const
 {
   return sqrt(dot(*this));
+}
+
+inline float vec2_t::to_angle() const
+{
+  return atan2(y, x);
 }
 
 inline float vec2_t::dot(const vec2_t &v) const

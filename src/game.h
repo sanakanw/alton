@@ -49,6 +49,11 @@ public:
   vec2_t  velocity;
 };
 
+class anim_t : public component_t {
+public:
+  float   prev_frame;
+};
+
 class clip_t : public component_t {
 public:
   vec2_t    position;
@@ -79,15 +84,16 @@ private:
   
   client_t    m_client;
   float       m_delta_time;
-  int         m_tick;
+  float       m_time;
   
   entity_t    m_player_entity;
   
   camera_t    m_camera;
-  transform_t m_transform[MAX_ENTITIES];
-  sprite_t    m_sprite[MAX_ENTITIES];
   clip_t      m_clip[MAX_ENTITIES];
+  anim_t      m_anim[MAX_ENTITIES];
+  sprite_t    m_sprite[MAX_ENTITIES];
   motion_t    m_motion[MAX_ENTITIES];
+  transform_t m_transform[MAX_ENTITIES];
   
   
   int         m_map_width;
@@ -105,6 +111,7 @@ private:
   void setup_clip();
   void clip_map();
   void clip_motion();
+  void animate_player();
   void lock_camera_on_player();
   
   entity_t add_entity();
