@@ -1,0 +1,63 @@
+{
+    "activeFile": "map_alton.tmx",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "": {
+            "scaleInDock": 1
+        },
+        "map.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 538,
+                "y": 193
+            }
+        },
+        "map_alton.tmx": {
+            "scale": 5.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 67.09090909090908,
+                "y": 62.09090909090909
+            }
+        },
+        "map_alton.tmx#tilemap_alton": {
+            "scaleInDock": 4
+        },
+        "map_alton.tmx#tileset_alotn": {
+            "scaleInDock": 1
+        },
+        "tilemap_alton.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 2
+        },
+        "tileset_alton.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 5.5
+        },
+        "utuujin.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 2
+        }
+    },
+    "last.imagePath": "/home/sanakan/g/alton/editor",
+    "map.lastUsedFormat": "tmx",
+    "map.orientation": null,
+    "openFiles": [
+        "map_alton.tmx"
+    ],
+    "project": "map_alton.tiled-project",
+    "recentFiles": [
+        "map_alton.tmx",
+        "tileset_alton.tsx",
+        "tilemap_alton.tsx",
+        "map.tmx",
+        "utuujin.tsx"
+    ],
+    "tileset.embedInMap": true,
+    "tileset.tileSize": {
+        "height": 8,
+        "width": 8
+    }
+}

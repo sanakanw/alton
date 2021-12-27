@@ -3,8 +3,6 @@
 
 #define _USE_MATH_DEFINES
 
-#define clamp(c, a, b) (c < a ? a : (c > b ? b : c))
-
 #include <iostream>
 #include <ostream>
 #include <math.h>

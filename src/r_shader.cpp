@@ -1,60 +1,60 @@
 #include "renderer.h"
 
-#include <iostream>
+#include "log.h"
 
 static const char *_src_shader_vertex = ""
-	"#version 330 core\n"
-	"layout(location = 0) in vec3 pos;\n"
-	"layout(location = 1) in vec2 uv;\n"
+  "#version 330 core\n"
+  "layout(location = 0) in vec3 pos;\n"
+  "layout(location = 1) in vec2 uv;\n"
   "out vec2 vs_uv;\n"
   "uniform mat4 u_mvp;"
-	"void main() {\n"
-	"	vs_uv = uv;\n"
-	"	gl_Position = u_mvp * vec4(pos, 1.0);\n"
-	"}";
+  "void main() {\n"
+  " vs_uv = uv;\n"
+  " gl_Position = u_mvp * vec4(pos, 1.0);\n"
+  "}";
 
 static const char *_src_shader_fragment = ""
-	"#version 330 core\n"
-	"out vec4 frag_color;\n"
-	"in vec2 vs_uv;\n"
+  "#version 330 core\n"
+  "out vec4 frag_color;\n"
+  "in vec2 vs_uv;\n"
   "uniform sampler2D sampler;\n"
-	"void main() {\n"
+  "void main() {\n"
   " vec4 color = texture2D(sampler, vs_uv);\n"
   " if (color.w == 0)\n"
   "   discard;\n"
-	"	frag_color = color;\n"
-	"}";
+  " frag_color = color;\n"
+  "}";
 
 static GLuint compile_shader(GLuint type, const char *src)
 {
-	int success;
-	static char info[1024];
-	
-	GLuint shader = glCreateShader(type);
-	glShaderSource(shader, 1, &src, NULL);
-	glCompileShader(shader);
-	
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+  int success;
+  static char info[1024];
+  
+  GLuint shader = glCreateShader(type);
+  glShaderSource(shader, 1, &src, NULL);
+  glCompileShader(shader);
+  
+  glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
   if (!success) {
-		glGetShaderInfoLog(shader, 1024, NULL, info);
-		std::cout << "error: compile_shader():" << std::endl << info << std::endl;
-	}
-	
-	return shader;
+    glGetShaderInfoLog(shader, 1024, NULL, info);
+    LOG_ERROR("compile_shader") << std::endl << info;
+  }
+  
+  return shader;
 }
 
 static GLuint link_shader(GLuint vertex_shader, GLuint fragment_shader)
 {
-	GLuint program = glCreateProgram();
-	glAttachShader(program, vertex_shader);
-	glAttachShader(program, fragment_shader);
-	
-	glLinkProgram(program);
-	
-	glDetachShader(program, vertex_shader);
-	glDetachShader(program, fragment_shader);
-	
-	return program;
+  GLuint program = glCreateProgram();
+  glAttachShader(program, vertex_shader);
+  glAttachShader(program, fragment_shader);
+  
+  glLinkProgram(program);
+  
+  glDetachShader(program, vertex_shader);
+  glDetachShader(program, fragment_shader);
+  
+  return program;
 }
 
 shader_t::shader_t()

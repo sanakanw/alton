@@ -3,6 +3,7 @@
 #include "win.h"
 #include "game.h"
 #include "renderer.h"
+#include "log.h"
 
 int main(int argc, char **argv)
 {

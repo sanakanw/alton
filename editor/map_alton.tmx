@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="16" height="16" tilewidth="8" tileheight="8" infinite="0" nextlayerid="3" nextobjectid="1">
- <editorsettings>
-  <export target="map_alton.json" format="json"/>
- </editorsettings>
- <tileset firstgid="1" source="tileset_alton.tsx"/>
+<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="16" height="16" tilewidth="8" tileheight="8" infinite="0" nextlayerid="2" nextobjectid="1">
+ <tileset firstgid="1" name="tilemap_alton" tilewidth="8" tileheight="8" tilecount="1024" columns="32">
+  <image source="tilemap.png" width="256" height="256"/>
+ </tileset>
  <layer id="1" name="Tile Layer 1" width="16" height="16">
   <data encoding="csv">
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
@@ -14,12 +13,12 @@
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-1,1,1,2,2,1,1,2,2,1,1,1,1,1,1,1,
-1,1,1,2,1,1,1,1,2,1,1,1,1,1,1,1,
-1,1,1,2,1,1,1,1,2,1,1,1,1,1,1,1,
-1,1,1,2,1,1,1,1,2,1,1,1,1,1,1,1,
-1,1,1,2,1,1,1,1,2,1,1,1,1,1,1,1,
-1,1,1,2,2,2,2,2,2,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 </data>
