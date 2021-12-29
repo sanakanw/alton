@@ -9,9 +9,12 @@ SPRITE_HEIGHT = 8.0
 TEXEL_WIDTH = SPRITE_WIDTH / TEX_WIDTH
 TEXEL_HEIGHT = SPRITE_HEIGHT / TEX_HEIGHT
 
-SOLID_TILE = (1 << 8)
-TILE_SNOW = 1
-TILE_WALL = 2
+ENTITY_TREE = 192
+
+class map_entity_t:
+  def __init__(self, entity_id, pos):
+    self.entity_id = entity_id
+    self.pos = pos
 
 class mesh_vertex_t:
   def __init__(self, pos, uv):

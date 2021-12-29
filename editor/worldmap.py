@@ -1,19 +1,28 @@
 from math3d import *
 from mapdefs import *
 
-def worldmap_from_json(worldmap_json):
-  worldmap_width = worldmap_json['width']
-  worldmap_height = worldmap_json['height']
+def get_uv_from_tile_id(tile_id, columns):
+  return vec2_t(tile_id % columns, math.floor(tile_id / columns))
 
-  worldmap_tiles = worldmap_json['layers'][0]['data']
+def worldmap_from_json(tiledict, worldmap_json):
+  width = worldmap_json["width"]
+  height = worldmap_json["height"]
   
-  return worldmap_t(worldmap_tiles, worldmap_width, worldmap_height)
+  tiles = worldmap_json["layers"][0]["data"]
+  entities = worldmap_json["layers"][1]["objects"]
+  
+  columns = worldmap_json["tilesets"][0]["columns"]
+  
+  return worldmap_t(width, height, columns, tiledict, tiles, entities)
 
 class worldmap_t:
-  def __init__(self, tiles, width, height):
-    self.tiles = tiles
+  def __init__(self, width, height, columns, tiledict, tiles, entities):
     self.width = width
     self.height = height
+    self.columns = columns
+    self.tiledict = tiledict
+    self.tiles = tiles
+    self.entities = entities
   
   def get_tile(self, x, y):
     if x < 0 or y < 0 or x >= self.width or y >= self.height:
@@ -38,25 +47,37 @@ class worldmap_t:
     
     return adjacent
   
+  def build_entities(self):
+    entities = []
+    
+    for entity in self.entities:
+      entity_id = int(entity["gid"])
+      x_pos = entity["x"] / SPRITE_WIDTH
+      y_pos = entity["y"] / SPRITE_HEIGHT
+      
+      entities.append(map_entity_t(entity_id, vec2_t(x_pos, y_pos)))
+    
+    return entities
+  
   def build_vertices(self):
     vertices = []
     
-    uv = [
-      vec2_t(0, 0),
-      vec2_t(1, 0)
-    ]
-    
     for y in range(self.width):
       for x in range(self.height):
-        tile_no = self.get_tile(x, y) - 1
+        tile = self.get_tile(x, y) - 1
         
         pos = vec3_t(x, y, 0)
-        if tile_no == 0:
-          vertices.extend(mesh_tile(pos, uv[tile_no]))
-        elif tile_no == 1:
-          vertices.extend(mesh_block(pos, self.find_adjacent_blocks(x, y), uv[tile_no]))
-        else:
-          print("unknown tile: tile_t(" + str(tile_no) + ") at " + str(pos))
+        tile_uv = get_uv_from_tile_id(tile, self.columns)
+        
+        if tile in self.tiledict:
+          blocks = self.tiledict[tile]
+          
+          for block in blocks:
+            block_uv = get_uv_from_tile_id(block, self.columns)
+            vertices.extend(mesh_block(pos, self.find_adjacent_blocks(x, y), block_uv))
+            pos.z -= 1
+        
+        vertices.extend(mesh_tile(pos, tile_uv))
     
     return vertices
 
@@ -82,7 +103,9 @@ def mesh_square(pos, tangent, bitangent, uv):
   
   for x, y in square_template:
     vertex_pos = pos.add(tangent.mulf(x)).add(bitangent.mulf(y))
-    vertex_uv = uv.add(vec2_t(x, 1-y)).mul(vec2_t(TEXEL_WIDTH, TEXEL_HEIGHT))
+    vertex_uv = uv.add(vec2_t(x * 0.99, y * 0.99)).mul(vec2_t(TEXEL_WIDTH, TEXEL_HEIGHT))
+    
+    #NOTE: multiplying by 0.99 for no weird pixel glitch resulting from floating precision
     
     vertices.append(mesh_vertex_t(vertex_pos, vertex_uv))
   
@@ -97,7 +120,6 @@ def mesh_block(pos, omitted_blocks, uv):
     (vec3_t( 0.0, +1.0,  0.0), vec3_t( 0.0, -1.0,  0.0), vec3_t( 0.0,  0.0, -1.0)), # left  (-1,  0,  0)
     (vec3_t(+1.0,  0.0,  0.0), vec3_t( 0.0,  1.0,  0.0), vec3_t( 0.0,  0.0, -1.0)), # right (+1,  0,  0)
     (vec3_t( 0.0,  0.0,  0.0), vec3_t(+1.0,  0.0,  0.0), vec3_t( 0.0,  0.0, -1.0)), # back  ( 0,  0, -1)
-    (vec3_t( 0.0,  0.0, -1.0), vec3_t(+1.0,  0.0,  0.0), vec3_t( 0.0, +1.0,  0.0))  # top   ( 0, +1,  0)
   ]
   
   vertices = []

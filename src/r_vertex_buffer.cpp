@@ -2,6 +2,9 @@
 
 #include "log.h"
 
+#define VERTEX_ATTRIB_0 3
+#define VERTEX_ATTRIB_1 2
+
 vertex_buffer_t::vertex_buffer_t(int size)
 {
   glGenVertexArrays(1, &m_vao);
@@ -11,16 +14,17 @@ vertex_buffer_t::vertex_buffer_t(int size)
   glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
   glBufferData(GL_ARRAY_BUFFER, size * sizeof(vertex_t), 0, GL_STATIC_DRAW);
   
+  const int stride = sizeof(vertex_t);
+  
   int offset = 0;
-  int stride = sizeof(vertex_t);
   
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (float*) 0 + offset);
-  offset += 3;
+  glVertexAttribPointer(0, VERTEX_ATTRIB_0, GL_FLOAT, GL_FALSE, stride, (float*) 0 + offset);
+  offset += VERTEX_ATTRIB_0;
   
   glEnableVertexAttribArray(1);
-  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (float*) 0 + offset);
-  offset += 2;
+  glVertexAttribPointer(1, VERTEX_ATTRIB_1, GL_FLOAT, GL_FALSE, stride, (float*) 0 + offset);
+  offset += VERTEX_ATTRIB_1;
   
   m_vertex_ptr = size - 1;
 }
@@ -28,7 +32,7 @@ vertex_buffer_t::vertex_buffer_t(int size)
 const mesh_t vertex_buffer_t::allocate_mesh(int num_vertices)
 {
   if (m_vertex_ptr - num_vertices < 0)
-    LOG(log_error) << "vertex_buffer_t::push_vertices(): ran out of memory " << m_vertex_ptr + num_vertices << "/" << num_vertices;
+    LOG_ERROR("vertex_buffer_t::push_vertices") << "ran out of memory: " << m_vertex_ptr + num_vertices << "/" << num_vertices;
   
   m_vertex_ptr -= num_vertices;
   

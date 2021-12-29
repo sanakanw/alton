@@ -6,6 +6,7 @@
 #include "mapfile.h"
 #include "client.h"
 #include <vector>
+#include <iostream>
 
 #define MAX_PLANES 8
 #define MAX_ENTITIES 256
@@ -95,7 +96,6 @@ private:
   motion_t    m_motion[MAX_ENTITIES];
   transform_t m_transform[MAX_ENTITIES];
   
-  
   int         m_map_width;
   int         m_map_height;
   std::vector<tile_t> m_tiles;
@@ -105,14 +105,17 @@ private:
   
   void camera_rotate();
   void player_move();
-  void apply_friction();
-  void update_sprite();
-  void update_motion();
-  void setup_clip();
-  void clip_map();
-  void clip_motion();
   void animate_player();
   void lock_camera_on_player();
+  
+  void apply_friction();
+  void update_motion();
+  void clip_motion();
+  
+  void setup_clip();
+  void clip_map();
+  
+  void update_sprite();
   
   entity_t add_entity();
 

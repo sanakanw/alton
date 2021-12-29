@@ -8,6 +8,7 @@
 
 typedef enum {
   LUMP_TILES,
+  LUMP_ENTITIES,
   LUMP_VERTICES,
   MAX_LUMPS
 } tlump_t;
@@ -32,6 +33,16 @@ private:
   mapheader_t   m_header;
   
   void *copy_lump(tlump_t tlump, int *lump_size);
+  
+  template<class T>
+  std::vector<T> load_lump(tlump_t tlump)
+  {
+    int buffer_size;
+    T *buffer = (T*) copy_lump(tlump, &buffer_size);
+    std::vector<T> lump_vector(buffer, buffer + buffer_size / sizeof(T));
+    free(buffer);
+    return lump_vector;
+  }
 
 public:
   mapfile_t(std::ifstream &in);
@@ -41,6 +52,7 @@ public:
   
   std::vector<tile_t> load_tiles();
   std::vector<vertex_t> load_vertices();
+  std::vector<map_entity_t> load_entities();
 };
 
 #endif

@@ -16,10 +16,10 @@
         },
         "map_alton.tmx": {
             "scale": 5.5,
-            "selectedLayer": 0,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 67.09090909090908,
-                "y": 62.09090909090909
+                "x": 85.09090909090908,
+                "y": 71.18181818181819
             }
         },
         "map_alton.tmx#tilemap_alton": {
@@ -41,7 +41,9 @@
             "scaleInEditor": 2
         }
     },
+    "last.exportedFilePath": "/home/sanakan/g/alton/editor",
     "last.imagePath": "/home/sanakan/g/alton/editor",
+    "map.lastUsedExportFilter": "All Files (*)",
     "map.lastUsedFormat": "tmx",
     "map.orientation": null,
     "openFiles": [

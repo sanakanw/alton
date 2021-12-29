@@ -39,18 +39,15 @@ void *mapfile_t::copy_lump(tlump_t tlump, int *lump_size)
 
 std::vector<tile_t> mapfile_t::load_tiles()
 {
-  int tile_buffer_size;
-  tile_t *tile_buffer = (tile_t*) copy_lump(LUMP_TILES, &tile_buffer_size);
-  std::vector<tile_t> tiles(tile_buffer, tile_buffer + tile_buffer_size / sizeof(tile_t));
-  free(tile_buffer);
-  return tiles;
+  return load_lump<tile_t>(LUMP_TILES);
+}
+
+std::vector<map_entity_t> mapfile_t::load_entities()
+{
+  return load_lump<map_entity_t>(LUMP_ENTITIES);
 }
 
 std::vector<vertex_t> mapfile_t::load_vertices()
 {
-  int vertex_buffer_size;
-  vertex_t *vertex_buffer = (vertex_t*) copy_lump(LUMP_VERTICES, &vertex_buffer_size);
-  std::vector<vertex_t> vertices(vertex_buffer, vertex_buffer + vertex_buffer_size / sizeof(vertex_t));
-  free(vertex_buffer);
-  return vertices;
+  return load_lump<vertex_t>(LUMP_VERTICES);
 }
