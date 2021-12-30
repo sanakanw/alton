@@ -6,10 +6,6 @@
 mapfile_t::mapfile_t(std::ifstream &in) :
   m_in(in)
 {
-  if (!in) {
-    LOG_ERROR("mapfile_t::mapfile_t") << "failed to open file";
-  }
-  
   m_in.read((char*) &m_header, sizeof(mapheader_t));
 }
 

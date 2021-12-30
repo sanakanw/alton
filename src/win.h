@@ -3,14 +3,14 @@
 
 #include "client.h"
 
+void	win_api_init();
+float	win_get_time();
+
 class win_t {
 private:
   bool m_quit;
   
 public:
-  static void init();
-  static float get_time();
-  
   win_t(int width, int height);
   
   void poll(client_t &client);

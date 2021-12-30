@@ -3,17 +3,12 @@
 #include <iostream>
 #include <SDL2/SDL_image.h>
 
-static unsigned int empty_texture_data[] = { 0xffff00ff, 0xff000000, 0xff000000, 0xffff00ff };
-static texture_t empty_texture(empty_texture_data, 2, 2);
-
 texture_t load_texture(const char *path)
 {
   SDL_Surface *bitmap = IMG_Load(path);
   
-  if (!bitmap) {
+  if (!bitmap)
     std::cerr << "could not load " << path << std::endl;
-    return empty_texture;
-  }
   
   return texture_t(bitmap->pixels, bitmap->w, bitmap->h);
 }

@@ -1,0 +1,1 @@
+cl /EHsc /Fo"bin\win_x64\obj/" /MP /Fe"bin/win_x64/alton.exe" -I".\lib\glew-2.1.0\include" -I".\lib\SDL2-2.0.18\include" opengl32.lib .\lib\glew-2.1.0\lib\Release\x64\glew32s.lib .\lib\SDL2_image-2.0.5\lib\x64\*.lib .\lib\SDL2-2.0.18\lib\x64\*.lib src\*.cpp

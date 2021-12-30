@@ -5,13 +5,11 @@
 #include <iostream>
 #include <functional>
 
-#define LOG_ERROR_CONCAT ():
-
 #define STRINGIZE(x) #x
 
 #define LOG(log_function) (log_t(log_function).get_stream())
 #define LOG_DEBUG() (log_t(log_debug).get_stream())
-#define LOG_ERROR(function_name) (log_t(log_debug).get_stream() << function_name << STRINGIZE(LOG_ERROR_CONCAT))
+#define LOG_ERROR(function_name) (log_t(log_error).get_stream() << function_name << STRINGIZE(():\x20))
 
 class log_t {
   using logfunc_t = std::function<void(const std::string&)>;

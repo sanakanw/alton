@@ -5,8 +5,10 @@
 #include "mapdefs.h"
 #include "mapfile.h"
 
+#define GLEW_STATIC
 #define GL_GLEXT_PROTOTYPES
 
+#include <GL/glew.h>
 #include <SDL2/SDL_opengl.h>
 
 class mesh_t {
@@ -89,5 +91,7 @@ public:
   void render_player_view();
 };
 
+void			gl_api_init();
 texture_t load_texture(const char *path);
+
 #endif

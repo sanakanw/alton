@@ -1,14 +1,26 @@
 #include "renderer.h"
 
-#define MAX_SPRITES 32
-#define VERTEX_BUFFER_SIZE 10 * 1024 * 1024
+#define MAX_SPRITES					32
+#define VERTEX_BUFFER_SIZE	10 * 1024 * 1024
 
+#include "log.h"
 #include <iostream>
+
+void gl_api_init()
+{
+	glewExperimental = GL_TRUE;
+	
+	GLenum glew_status = glewInit();
+	
+	if (glew_status != GLEW_OK)
+    LOG_ERROR("renderer_t::renderer_t") << "failed to initialize GLEW: " << glewGetErrorString(glew_status);
+}
 
 renderer_t::renderer_t(const game_t &game, float aspect_ratio) :
   m_vertex_buffer(VERTEX_BUFFER_SIZE),
   m_game(game)
 {
+	
   glEnable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
   

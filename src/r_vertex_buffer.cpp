@@ -26,7 +26,7 @@ vertex_buffer_t::vertex_buffer_t(int size)
   glVertexAttribPointer(1, VERTEX_ATTRIB_1, GL_FLOAT, GL_FALSE, stride, (float*) 0 + offset);
   offset += VERTEX_ATTRIB_1;
   
-  m_vertex_ptr = size - 1;
+  m_vertex_ptr = size - 1; 
 }
 
 const mesh_t vertex_buffer_t::allocate_mesh(int num_vertices)
