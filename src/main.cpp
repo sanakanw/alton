@@ -5,19 +5,23 @@
 #include "renderer.h"
 #include "log.h"
 
+#define WIDTH							1280
+#define HEIGHT						960
+#define ASPECT_RATIO			((float) HEIGHT / (float) WIDTH)
+
+#define SECONDS_PER_TICK	1.0f / 60.0f
+
 int main(int argc, char **argv)
 {
   win_api_init();
-  win_t win(1280, 960);
+  win_t win(WIDTH, HEIGHT);
 	
 	gl_api_init();
   
   game_t game;
   client_t client;
 	
-  renderer_t renderer(game, 960.0f/1280.0f);
-  
-  float prev_time, cur_time;
+  renderer_t renderer(game, ASPECT_RATIO);
   
   std::ifstream file_map_map("map.map");
   
@@ -25,22 +29,27 @@ int main(int argc, char **argv)
   game.new_map(mapfile);
   renderer.new_map(mapfile);
   
-  prev_time = win_get_time();
+  float prev_time = win_get_time();
+	float cur_time = prev_time;
+	float unprocessed_time = 0.0f;
   
   while (!win.is_quit()) {
-		win.poll(client);
-    
     cur_time = win_get_time();
     float dt = cur_time - prev_time;
     prev_time = cur_time;
-    
-    game.update(dt, client);
-    
-    renderer.render_player_view();
-    
-    win.swap();
-  }
-  
+		
+		unprocessed_time += dt;
+		
+		while (unprocessed_time >= 1.0f) {
+			unprocessed_time -= SECONDS_PER_TICK;
+			
+			win.poll(client);
+			game.update(SECONDS_PER_TICK, client);
+			renderer.render_player_view();
+			win.swap();
+		}
+  };
+	
   win.quit();
   
   return 0;
