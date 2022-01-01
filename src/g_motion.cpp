@@ -16,7 +16,6 @@ float game_t::move_accelerate(const vec2_t &prev_velocity, const vec2_t &wish_di
   return accel_speed;
 }
 
-
 void game_t::clip_motion()
 {
   for (int i = 0; i < m_num_entities; i++) {
@@ -40,7 +39,7 @@ void game_t::clip_motion()
 
 void game_t::apply_friction()
 {
-  static const float MOTION_FRICTION = 16.0f;
+  static const float MOTION_FRICTION = 8.0f;
   
   for (int i = 0; i < m_num_entities; i++) {
     if (!m_motion[i].is_active())
@@ -49,8 +48,8 @@ void game_t::apply_friction()
     float speed = m_motion[i].velocity.length();
     
     if (speed != 0) {
-      float drop = speed * MOTION_FRICTION * m_delta_time;
-      m_motion[i].velocity *= std::max((speed - drop), 0.0f) / speed;
+      float drop = MOTION_FRICTION * m_delta_time;
+      m_motion[i].velocity *= std::max(1 - drop, 0.0f);
     }
   }
 }

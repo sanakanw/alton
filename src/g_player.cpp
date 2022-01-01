@@ -13,13 +13,13 @@ void game_t::animate_player()
   float face_dir = constrain_angle(m_transform[m_player_entity].rotation - m_camera.view_angle);
   
   if (face_dir > 1.0f / 6.0f * M_PI && face_dir <= 5.0f / 6.0f * M_PI) // FACING FORWARD
-    m_sprite[m_player_entity].state = 1;
+    m_sprite[m_player_entity].state = 0;
   else if (face_dir > 5.0f / 6.0f * M_PI && face_dir <= 7.0f / 6.0f * M_PI) // FACING LEFT
-    m_sprite[m_player_entity].state = 2;
+    m_sprite[m_player_entity].state = 1;
   else if (face_dir > 7.0f / 6.0f * M_PI && face_dir <= 11.0f / 6.0f * M_PI) // FACING DOWN
-    m_sprite[m_player_entity].state = 3;
+    m_sprite[m_player_entity].state = 2;
   else // FACING RIGHT (NOTE: [0, 30], [330, 360]) 
-    m_sprite[m_player_entity].state = 4;
+    m_sprite[m_player_entity].state = 3;
   
   float t = m_time - m_anim[m_player_entity].prev_frame;
   
@@ -43,7 +43,7 @@ void game_t::animate_player()
 void game_t::player_move()
 {
   const float PLAYER_MOVE_ACCEL = 4.0f;
-  const float PLAYER_MOVE_SPEED = 24.0f;
+  const float PLAYER_MOVE_SPEED = 16.0f;
   
   if (m_client.get_right() || m_client.get_forward()) {
     vec2_t move_dir = vec2_t(m_client.get_right(), m_client.get_forward()).normalize();

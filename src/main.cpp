@@ -39,12 +39,12 @@ int main(int argc, char **argv)
     prev_time = cur_time;
 		
 		unprocessed_time += dt;
-		
-		while (unprocessed_time >= 1.0f) {
-			unprocessed_time -= SECONDS_PER_TICK;
-			
-			win.poll(client);
-			game.update(SECONDS_PER_TICK, client);
+    
+		if (unprocessed_time >= SECONDS_PER_TICK) {
+      unprocessed_time -= SECONDS_PER_TICK;
+      
+      win.poll(client);
+      game.update(SECONDS_PER_TICK, client);
 			renderer.render_player_view();
 			win.swap();
 		}
