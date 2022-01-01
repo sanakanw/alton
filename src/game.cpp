@@ -13,10 +13,11 @@ game_t::game_t()
   m_motion[m_player_entity].activate();
   m_transform[m_player_entity].activate();
   
-  m_sprite[m_player_entity].width = 1;
-  m_sprite[m_player_entity].height = 1;
-  m_sprite[m_player_entity].state = 1;
+  m_sprite[m_player_entity].size = vec2_t(1, 1);
+  m_sprite[m_player_entity].offset = vec2_t(0, 1);
+  m_sprite[m_player_entity].state = 0;
   m_sprite[m_player_entity].frame = 0;
+  
 }
 
 void game_t::update(float delta_time, const client_t &client)
@@ -35,6 +36,7 @@ void game_t::update(float delta_time, const client_t &client)
   
   setup_clip();
   clip_map();
+  clip_circle();
   clip_motion();
   update_motion();
   
@@ -54,11 +56,14 @@ void game_t::new_map(mapfile_t &mapfile)
     case ENTITY_TREE:
       m_sprite[entity].activate();
       m_transform[entity].activate();
+      m_circle[entity].activate();
       
-      m_sprite[entity].width = 2;
-      m_sprite[entity].height = 2;
-      m_sprite[entity].state = 5;
+      m_sprite[entity].size = vec2_t(2, 2);
+      m_sprite[entity].offset = vec2_t(0, 5);
+      m_sprite[entity].state = 0;
       m_sprite[entity].frame = 0;
+      
+      m_circle[entity].radius = 0.5f;
       
       m_transform[entity].position = map_entity.pos;
       

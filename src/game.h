@@ -55,21 +55,29 @@ public:
   float   prev_frame;
 };
 
+class circle_t : public component_t
+{
+public:
+  float   radius;
+};
+
 class clip_t : public component_t {
 public:
-  vec2_t    position;
-  int       num_planes;
   plane2d_t planes[MAX_PLANES];
+  int       num_planes;
+  vec2_t    position;
 };
 
 class sprite_t : public component_t {
 public:
   vec2_t  position;
   float   rotation;
-  int     width;
-  int     height;
-  int     state;
+  
+  vec2_t  size;
+  vec2_t  offset;
+  
   int     frame;
+  int     state;
 };
 
 class camera_t {
@@ -90,6 +98,7 @@ private:
   entity_t    m_player_entity;
   
   camera_t    m_camera;
+  circle_t      m_circle[MAX_ENTITIES];
   clip_t      m_clip[MAX_ENTITIES];
   anim_t      m_anim[MAX_ENTITIES];
   sprite_t    m_sprite[MAX_ENTITIES];
@@ -100,24 +109,30 @@ private:
   int         m_map_height;
   std::vector<tile_t> m_tiles;
   
-  tile_t map_check(int x, int y) const;
-  float move_accelerate(const vec2_t &prev_velocity, const vec2_t &wish_dir, float accel, float wish_speed) const;
+  entity_t add_entity();
   
+  // g_player.cpp
   void camera_rotate();
   void player_move();
   void animate_player();
   void lock_camera_on_player();
   
+  // g_motion.cpp
   void apply_friction();
   void update_motion();
   void clip_motion();
   
+  float move_accelerate(const vec2_t &prev_velocity, const vec2_t &wish_dir, float accel, float wish_speed) const;
+  
+  // g_clip.cpp
   void setup_clip();
   void clip_map();
+  void clip_circle();
   
+  tile_t map_check(int x, int y) const;
+  
+  // g_sprite.cpp
   void update_sprite();
-  
-  entity_t add_entity();
 
 public:
   game_t();

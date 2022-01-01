@@ -1,11 +1,11 @@
 default: build run
 
 debug:
-	g++ -g src/*.cpp -lSDL2_image -lSDL2 -lGL -lm -o alton
+	g++ -g src/*.cpp -lSDL2_image -lSDL2 -lGL -lm -lGLEW -o alton
 	gdb
 
 build:
-	g++ -O3 src/*.cpp -lSDL2_image -lSDL2 -lGL -lm -o alton
+	g++ -O3 src/*.cpp -lSDL2_image -lSDL2 -lGL -lm -lGLEW -o alton
 	
 win_x64:
 	build.bat

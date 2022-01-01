@@ -15,11 +15,11 @@
             }
         },
         "map_alton.tmx": {
-            "scale": 5.5,
+            "scale": 3,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 85.09090909090908,
-                "y": 71.18181818181819
+                "x": 117.33333333333333,
+                "y": 80.16666666666667
             }
         },
         "map_alton.tmx#tilemap_alton": {

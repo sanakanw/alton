@@ -112,11 +112,11 @@ void renderer_t::render_sprite()
       continue;
     
     for (int j = 0; j < 6; j++) {
-      vec3_t sprite_size_pos = sprite_pos[j] * vec3_t(sprite.width, sprite.height, sprite.height);
+      vec3_t sprite_size_pos = sprite_pos[j] * vec3_t(sprite.size, sprite.size.y);
       vec3_t sprite_rot_pos = sprite_size_pos.rotate_z(m_game.get_camera().view_angle);
       
-      vec2_t sprite_uv_scaled = sprite_uv[j] * vec2_t(sprite.width, sprite.height);
-      vec2_t sprite_uv_offset = sprite_uv_scaled + vec2_t(sprite.frame, sprite.state);
+      vec2_t sprite_uv_scaled = sprite_uv[j] * sprite.size;
+      vec2_t sprite_uv_offset = sprite_uv_scaled + vec2_t(sprite.frame, sprite.state) + sprite.offset;
       
       vec3_t vertex_pos = sprite_rot_pos + vec3_t(sprite.position, 0);
       vec2_t vertex_uv = sprite_uv_offset * texel_size;
