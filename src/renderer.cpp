@@ -27,7 +27,7 @@ renderer_t::renderer_t(const game_t &game, float aspect_ratio) :
   glCullFace(GL_FRONT);
   glDepthFunc(GL_LESS);
   
-  const float fov = 12.0f;
+  const float fov = 8.0f;
   
 	m_map_projection_matrix.init_orthogonal_perspective(
     -fov,
