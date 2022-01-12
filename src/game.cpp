@@ -32,8 +32,6 @@ void game_t::update(float delta_time, const client_t &client)
   camera_rotate();
   player_move();
   
-  apply_friction();
-  
   setup_clip();
   clip_map();
   clip_circle();

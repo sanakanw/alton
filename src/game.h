@@ -86,6 +86,28 @@ public:
   float   view_angle;
 };
 
+class ray_t {
+private:
+  bool    m_hit;
+
+public:
+  float   distance;
+  vec2_t  normal;
+
+public:
+  ray_t(const vec2_t &_normal = vec2_t(), float _distance = 0.0f, bool _hit = false)
+  {
+    m_hit = _hit;
+    normal = _normal;
+    distance = _distance;
+  }
+  
+  operator bool() const
+  {
+    return m_hit;
+  }
+};
+
 class game_t {
 private:
   entity_t    m_entities[MAX_ENTITIES];
@@ -98,7 +120,7 @@ private:
   entity_t    m_player_entity;
   
   camera_t    m_camera;
-  circle_t      m_circle[MAX_ENTITIES];
+  circle_t    m_circle[MAX_ENTITIES];
   clip_t      m_clip[MAX_ENTITIES];
   anim_t      m_anim[MAX_ENTITIES];
   sprite_t    m_sprite[MAX_ENTITIES];
@@ -118,11 +140,8 @@ private:
   void lock_camera_on_player();
   
   // g_motion.cpp
-  void apply_friction();
   void update_motion();
   void clip_motion();
-  
-  float move_accelerate(const vec2_t &prev_velocity, const vec2_t &wish_dir, float accel, float wish_speed) const;
   
   // g_clip.cpp
   void setup_clip();
@@ -130,6 +149,7 @@ private:
   void clip_circle();
   
   tile_t map_check(int x, int y) const;
+  ray_t map_raycast(const vec2_t &pos, const vec2_t &dir, float max_dist) const;
   
   // g_sprite.cpp
   void update_sprite();

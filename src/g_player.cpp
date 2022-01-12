@@ -1,5 +1,21 @@
 #include "game.h"
 
+float player_accelerate(const vec2_t &prev_velocity, const vec2_t &wish_dir, float accel, float wish_speed)
+{
+  float current_speed = prev_velocity.dot(wish_dir);
+  float add_speed = wish_speed - current_speed;
+  
+  if (add_speed <= 0)
+    return 0;
+  
+  float accel_speed = accel * wish_speed;
+  
+  if (accel_speed > add_speed)
+    accel_speed = add_speed;
+  
+  return accel_speed;
+}
+
 void game_t::camera_rotate()
 {
   const float CAMERA_ROT_SPEED = 2.0f;
@@ -42,21 +58,23 @@ void game_t::animate_player()
 
 void game_t::player_move()
 {
-  const float PLAYER_MOVE_ACCEL = 4.0f;
-  const float PLAYER_MOVE_SPEED = 16.0f;
+  const float PLAYER_MOVE_ACCEL = 8.0f;
+  const float PLAYER_MOVE_SPEED = 8.0f;
   
   if (m_client.get_right() || m_client.get_forward()) {
     vec2_t move_dir = vec2_t(m_client.get_right(), m_client.get_forward()).normalize();
     vec2_t wish_dir = move_dir.rotate(m_camera.view_angle);
     
-    float accel = move_accelerate(
+    float accel = player_accelerate(
       m_motion[m_player_entity].velocity,
       wish_dir,
-      PLAYER_MOVE_ACCEL,
+      PLAYER_MOVE_ACCEL * m_delta_time,
       PLAYER_MOVE_SPEED);
     
-    m_motion[m_player_entity].velocity += wish_dir * accel;
+    m_motion[m_player_entity].velocity = wish_dir * PLAYER_MOVE_SPEED;
     m_transform[m_player_entity].rotation = wish_dir.to_angle();
+  } else {
+    m_motion[m_player_entity].velocity = vec2_t();
   }
 }
 

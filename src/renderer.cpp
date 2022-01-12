@@ -20,14 +20,13 @@ renderer_t::renderer_t(const game_t &game, float aspect_ratio) :
   m_vertex_buffer(VERTEX_BUFFER_SIZE),
   m_game(game)
 {
-	
   glEnable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
   
   glCullFace(GL_FRONT);
   glDepthFunc(GL_LESS);
   
-  const float fov = 8.0f;
+  const float fov = 12.0f;
   
 	m_map_projection_matrix.init_orthogonal_perspective(
     -fov,
