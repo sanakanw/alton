@@ -1,3 +1,12 @@
+/*
+
+-- client.h --
+"Middleman" for processing external input (net, keyboard, mouse)
+and wrapping them to be processable by game_t. This is to be rewritten to
+create a series of usercmd_t instead of directly accessing through client_t
+
+*/
+
 #ifndef CLIENT_H
 #define CLIENT_H
 
@@ -17,8 +26,8 @@ public:
   int get_forward() const;
   int get_right() const;
   int get_rot() const;
-  float get_pitch() const;
-  float get_yaw() const;
+  float get_mouse_x() const;
+  float get_mouse_y() const;
 };
 
 #endif

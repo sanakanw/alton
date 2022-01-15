@@ -1,51 +1,52 @@
 #include "game.h"
 
-float player_accelerate(const vec2_t &prev_velocity, const vec2_t &wish_dir, float accel, float wish_speed)
-{
-  float current_speed = prev_velocity.dot(wish_dir);
-  float add_speed = wish_speed - current_speed;
-  
-  if (add_speed <= 0)
-    return 0;
-  
-  float accel_speed = accel * wish_speed;
-  
-  if (accel_speed > add_speed)
-    accel_speed = add_speed;
-  
-  return accel_speed;
-}
+/*
+  All systems related to player movement and animation
+*/
 
+// Rotate the camera
 void game_t::camera_rotate()
 {
   const float CAMERA_ROT_SPEED = 2.0f;
   m_camera.view_angle += m_client.get_rot() * CAMERA_ROT_SPEED * -m_delta_time;
 }
 
+// Animates the player
 void game_t::animate_player()
 {
+  // total time to cycle through a single walk animation
   const float WALK_FRAME_TIME = 0.5f;
   
+  // angle player is facing relative to the camera (based off the last direciton the player moved in)
   float face_dir = constrain_angle(m_transform[m_player_entity].rotation - m_camera.view_angle);
   
-  if (face_dir > 1.0f / 6.0f * M_PI && face_dir <= 5.0f / 6.0f * M_PI) // FACING FORWARD
-    m_sprite[m_player_entity].state = 0;
-  else if (face_dir > 5.0f / 6.0f * M_PI && face_dir <= 7.0f / 6.0f * M_PI) // FACING LEFT
-    m_sprite[m_player_entity].state = 1;
-  else if (face_dir > 7.0f / 6.0f * M_PI && face_dir <= 11.0f / 6.0f * M_PI) // FACING DOWN
-    m_sprite[m_player_entity].state = 2;
-  else // FACING RIGHT (NOTE: [0, 30], [330, 360]) 
-    m_sprite[m_player_entity].state = 3;
+  // the facing direction determines the player sprite state
+  // NOTE: uses radians
+  if (face_dir > 1.0f / 6.0f * M_PI && face_dir <= 5.0f / 6.0f * M_PI) // (30, 150)
+    m_sprite[m_player_entity].state = 0; // FACING FORARD
+  else if (face_dir > 5.0f / 6.0f * M_PI && face_dir <= 7.0f / 6.0f * M_PI) // (150, 210)
+    m_sprite[m_player_entity].state = 1; // FACING LEFT
+  else if (face_dir > 7.0f / 6.0f * M_PI && face_dir <= 11.0f / 6.0f * M_PI) // (210, 330)
+    m_sprite[m_player_entity].state = 2; // FACING DOWN
+  else // [0, 30], [330, 360]
+    m_sprite[m_player_entity].state = 3; // FACING RIGHT
   
+  // time since last frame;
   float t = m_time - m_anim[m_player_entity].prev_frame;
   
+  // check if the player is moving
   if (m_motion[m_player_entity].velocity.length() > 1.0f) {
+    
+    // if the time exceeds a full walk frame, reset it
     if (t > WALK_FRAME_TIME) {
       float over_time = t - WALK_FRAME_TIME;
       m_anim[m_player_entity].prev_frame = m_time + over_time;
       t = over_time;
     }
     
+    // written like a piecewise function based on 't' to determine the frame
+    // conditions stacked latest to earliest (top to bottom) to reduce number
+    // of conditions in the if statement
     if (t > WALK_FRAME_TIME / 2.0f)
       m_sprite[m_player_entity].frame = 2;
     else if (t > 0.0f)
@@ -62,14 +63,9 @@ void game_t::player_move()
   const float PLAYER_MOVE_SPEED = 8.0f;
   
   if (m_client.get_right() || m_client.get_forward()) {
+    // derive the moving direction from the inputs and camera rotation
     vec2_t move_dir = vec2_t(m_client.get_right(), m_client.get_forward()).normalize();
     vec2_t wish_dir = move_dir.rotate(m_camera.view_angle);
-    
-    float accel = player_accelerate(
-      m_motion[m_player_entity].velocity,
-      wish_dir,
-      PLAYER_MOVE_ACCEL * m_delta_time,
-      PLAYER_MOVE_SPEED);
     
     m_motion[m_player_entity].velocity = wish_dir * PLAYER_MOVE_SPEED;
     m_transform[m_player_entity].rotation = wish_dir.to_angle();

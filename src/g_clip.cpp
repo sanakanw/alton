@@ -1,5 +1,9 @@
 #include "game.h"
 
+/*
+  TODO: will document after rewrite
+*/
+
 tile_t game_t::map_check(int x, int y) const
 {
   if (x < 0 || y < 0 || x >= m_map_width || y >= m_map_height)
@@ -84,7 +88,7 @@ void game_t::clip_circle()
       float delta_distance = delta.length() - m_circle[j].radius - clip_radius;
       
       if (delta_distance < 0) {
-        m_clip[i].planes[m_clip[i].num_planes] = plane2d_t(delta.normalize(), -delta_distance);
+        m_clip[i].planes[m_clip[i].num_planes] = plane_t(delta.normalize(), delta_distance);
         m_clip[i].num_planes++;
       }
     }

@@ -1,3 +1,10 @@
+/*
+
+-- renderer.h --
+Renders a game_t using OpenGLes 3 (after emscripten compatability port).
+
+*/
+
 #ifndef RENDERER_H
 #define RENDERER_H
 

@@ -1,5 +1,10 @@
 #include "game.h"
 
+/*
+  Systems for setting up components for rendering
+*/
+
+// Copies releavnt component information into sprites
 void game_t::update_sprite()
 {
   for (int i = 0; i < m_num_entities; i++) {
