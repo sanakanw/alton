@@ -27,21 +27,22 @@ void game_t::update(float delta_time, const client_t &client)
 {
   m_client = client;
   m_delta_time = delta_time;
+  m_time += delta_time;
   
-  // logical order of systems:
-  // systems updating components based on player input
-  // systems advancing game state: motion
-  // systems updating visual components
-  
+  // behaviour
   camera_rotate();
   player_move();
   
+  // collision
   setup_clip();
   clip_map();
-  clip_circle();
+  clip_box();
+  
+  // motion
   clip_motion();
   update_motion();
   
+  // visual
   animate_player();
   update_sprite();
   lock_camera_on_player();
@@ -56,22 +57,22 @@ void game_t::new_map(mapfile_t &mapfile)
   
   // load map_entity from map: position and entity id
   // based off the entity id, create the entity in game_t
+  
   for (const map_entity_t &map_entity : mapfile.load_entities()) {
     entity_t entity = add_entity();
     switch (map_entity.entity_id - 1) {
     case ENTITY_TREE:
       m_sprite[entity].activate();
-      m_transform[entity].activate();
-      m_circle[entity].activate();
+      m_box[entity].activate();
       
+      m_sprite[entity].position = map_entity.pos;
       m_sprite[entity].size = vec2_t(2, 2);
       m_sprite[entity].offset = vec2_t(0, 5);
       m_sprite[entity].state = 0;
       m_sprite[entity].frame = 0;
       
-      m_circle[entity].radius = 0.5f;
-      
-      m_transform[entity].position = map_entity.pos;
+      m_box[entity].box.min = map_entity.pos + vec2_t(-0.4f, -0.4f);
+      m_box[entity].box.max = map_entity.pos + vec2_t(+0.4f, +0.4f);
       
       break;
     }

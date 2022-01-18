@@ -16,7 +16,7 @@ class map_entity_t:
     self.entity_id = entity_id
     self.pos = pos
 
-class mesh_vertex_t:
+class map_vertex_t:
   def __init__(self, pos, uv):
     self.pos = pos
     self.uv = uv
@@ -26,3 +26,12 @@ class mesh_vertex_t:
   
   def __str__(self):
     return self.__repr__()
+
+class map_chunk_t:
+  def __init(self, vertices, tiles, neighbours):
+    self.vertices = vertices
+    self.tiles = tiles
+    self.neighbours = neighbours
+
+class map_t:
+  def __init__(self, chunks, entities):

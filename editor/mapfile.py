@@ -40,30 +40,30 @@ def emit_lump(f, fileofs, filelen):
   emit_i32(f, fileofs)
   emit_i32(f, filelen)
 
-def map_save(worldmap, path):
+def map_save(map, path):
   with open(path, "wb") as f:
     f.seek(SIZEOF_HEADER)
     
     tiles_fileofs = f.tell()
-    for tile in worldmap.tiles:
+    for tile in map.tiles:
       emit_i32(f, tile)
     tiles_filelen = f.tell() - tiles_fileofs
     
     entities_fileofs = f.tell()
-    for entity in worldmap.build_entities():
+    for entity in map.build_entities():
       emit_entity_t(f, entity)
     entities_filelen = f.tell() - entities_fileofs
     
     vertices_fileofs = f.tell()
-    for mesh_vertex in worldmap.build_vertices():
+    for mesh_vertex in map.build_vertices():
       emit_mesh_vertex_t(f, mesh_vertex)
     vertices_filelen = f.tell() - vertices_fileofs
     
     f.seek(0)
     
     emit_i32(f, MAP_VERSION)
-    emit_i32(f, worldmap.width)
-    emit_i32(f, worldmap.height)
+    emit_i32(f, map.width)
+    emit_i32(f, map.height)
     emit_lump(f, tiles_fileofs, tiles_filelen)
     emit_lump(f, entities_fileofs, entities_filelen)
     emit_lump(f, vertices_fileofs, vertices_filelen)

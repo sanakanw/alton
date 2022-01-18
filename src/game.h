@@ -6,20 +6,6 @@ The main game class designed under an Entity Component System architecture
   Entity: unsigned int used to reference its relevant components
   Component: pure structure which cannot mutate itself
   System: a function which modifies relevant components
-  
-The game_t class stores components under a fixed size array of MAX_ENTITIES.
-Systems iterate from 0 to 'num_entities' and identify entities meet a criteria
-of active components. A general system function is structured as:
-
-  void some_system()
-  {
-    for (int i = 0; i < num_entities; i++) {
-      if (!m_some_component[i].is_active() || !m_some_other_component[i].is_active())
-        continue;
-      
-      ...
-    }
-  }
 
 */
 
@@ -33,7 +19,6 @@ of active components. A general system function is structured as:
 #include <vector>
 #include <iostream>
 
-#define MAX_PLANES 8
 #define MAX_ENTITIES 256
 
 typedef unsigned int entity_t;
@@ -83,19 +68,27 @@ public:
   float   prev_frame;
 };
 
-// Static circle collider (NOTE: will soon be deprecated, switching to aabb only collision system)
-class circle_t : public component_t
-{
+class aabb_t {
 public:
-  float   radius;
+  vec2_t  min;
+  vec2_t  max;
 };
 
-// Collision resolution (TODO: fix/rewrite at later date)
+// Static AABB collider
+class box_t : public component_t
+{
+public:
+  aabb_t  box;
+};
+
+// AABB Collision resolution
 class clip_t : public component_t {
 public:
-  plane_t   planes[MAX_PLANES];
-  int       num_planes;
-  vec2_t    position;
+  aabb_t  delta_check;
+  aabb_t  x_delta_check;
+  aabb_t  y_delta_check;
+  
+  vec2_t  velocity_clip;
 };
 
 // Wrapper for an entity which the renderer will use
@@ -123,35 +116,13 @@ public:
   float   view_angle;
 };
 
-// Raycasting used for continuous collision detecion (NOTE: may be deprecated after collision revamp)
-class ray_t {
-private:
-  bool    m_hit;
-
-public:
-  float   distance;
-  vec2_t  normal;
-
-public:
-  ray_t(const vec2_t &_normal = vec2_t(), float _distance = 0.0f, bool _hit = false)
-  {
-    m_hit = _hit;
-    normal = _normal;
-    distance = _distance;
-  }
-  
-  operator bool() const
-  {
-    return m_hit;
-  }
-};
-
 // Main game class
 class game_t {
 private:
   // Input
   client_t    m_client;
   float       m_delta_time;
+  float       m_time;
   
   // Entities
   entity_t    m_entities[MAX_ENTITIES];
@@ -164,7 +135,7 @@ private:
   
   // Components
   camera_t    m_camera;
-  circle_t    m_circle[MAX_ENTITIES];
+  box_t       m_box[MAX_ENTITIES];
   clip_t      m_clip[MAX_ENTITIES];
   anim_t      m_anim[MAX_ENTITIES];
   sprite_t    m_sprite[MAX_ENTITIES];
@@ -183,16 +154,16 @@ private:
   void lock_camera_on_player();
   
   // g_motion.cpp: physics/motion
-  void update_motion();
   void clip_motion();
+  void update_motion();
   
   // g_clip.cpp: collision
   void setup_clip();
   void clip_map();
-  void clip_circle();
+  void clip_box();
   
   tile_t map_check(int x, int y) const;
-  ray_t map_raycast(const vec2_t &pos, const vec2_t &dir, float max_dist) const;
+  bool aabb_map_check(const aabb_t &box) const;
   
   // g_sprite.cpp: rendering
   void update_sprite();

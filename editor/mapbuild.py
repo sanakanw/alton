@@ -4,18 +4,29 @@ from mapdefs import *
 def get_uv_from_tile_id(tile_id, columns):
   return vec2_t(tile_id % columns, math.floor(tile_id / columns))
 
-def worldmap_from_json(tiledict, worldmap_json):
-  width = worldmap_json["width"]
-  height = worldmap_json["height"]
+def map_from_json(tiledict, map_json):
+  width = map_json["width"]
+  height = map_json["height"]
   
-  tiles = worldmap_json["layers"][0]["data"]
-  entities = worldmap_json["layers"][1]["objects"]
+  tiles = map_json["layers"][0]["data"]
+  entities = map_json["layers"][1]["objects"]
   
-  columns = worldmap_json["tilesets"][0]["columns"]
+  columns = map_json["tilesets"][0]["columns"]
   
-  return worldmap_t(width, height, columns, tiledict, tiles, entities)
+  return map_t(width, height, columns, tiledict, tiles, entities)
 
-class worldmap_t:
+class mapbuild_t:
+  def __init__(self, tiledict_json, map_json):
+    self.width = map_json["width"]
+    self.height = map_json["height"]
+    
+    self.tiles = map_json["layers"][0]["data"]
+    self.entities = map_json["layers"][1]["objects"]
+    
+    self.columns = map_json["tilesets"][0]["columns"]
+  
+
+class map_t:
   def __init__(self, width, height, columns, tiledict, tiles, entities):
     self.width = width
     self.height = height

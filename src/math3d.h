@@ -37,6 +37,7 @@ public:
   vec2_t operator*(float f) const;
   vec2_t operator/(float f) const;
   vec2_t &operator+=(const vec2_t &v);
+  vec2_t &operator*=(const vec2_t &v);
   vec2_t &operator*=(float f);
   
   float length() const;
@@ -187,6 +188,14 @@ inline vec2_t &vec2_t::operator+=(const vec2_t &v)
 {
   x += v.x;
   y += v.y;
+  
+  return *this;
+}
+
+inline vec2_t &vec2_t::operator*=(const vec2_t &v)
+{
+  x *= v.x;
+  y *= v.y;
   
   return *this;
 }

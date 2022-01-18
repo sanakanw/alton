@@ -30,7 +30,7 @@ renderer_t::renderer_t(const game_t &game, float aspect_ratio) :
   const float fov = 12.0f;
   
   // isometric perspective when rotating camera
-	m_map_projection_matrix.init_orthogonal_perspective(
+  m_map_projection_matrix.init_orthogonal_perspective(
     -fov,
     +fov,
     +fov * aspect_ratio,
